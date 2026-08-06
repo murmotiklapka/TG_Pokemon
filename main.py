@@ -32,6 +32,6 @@ def go(message):
     else:
         bot.reply_to(message, "Ты уже создал себе пикачу")
 
-
 bot.infinity_polling(none_stop=True)
+
 
