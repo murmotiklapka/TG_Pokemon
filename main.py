@@ -1,21 +1,24 @@
 import telebot 
+from random import randint
+from random import choice
 from config import token
-
-from logic import Pokemon
+from logic import Pokemon, Wizard, Fighter
 
 bot = telebot.TeleBot(token) 
 pikachu_nummer = 0
+classes = [Pokemon, Wizard, Fighter]
 
 @bot.message_handler(commands=['go'])
 def go(message):
     if message.from_user.username not in Pokemon.pokemons.keys():
-        pokemon = Pokemon(message.from_user.username)
+        random_class = classes[randint(0, len(classes) - 1)]
+        pokemon = random_class(message.from_user.username)
         bot.send_message(message.chat.id, pokemon.info())
         bot.send_message(message.chat.id, pokemon.show_link())
         bot.send_photo(message.chat.id, pokemon.show_img())
         bot.send_message(message.chat.id, pokemon.show_nummber())
         bot.send_video(message.chat.id, pokemon.show_animation())
-        bot.send_message(message.chat.id, 'вы можете подлеить покемона командой /heal')
+        bot.send_message(message.chat.id, 'вы можете подлечить покемона командой /heal')
     else:
         bot.reply_to(message, "Ты уже создал себе покемона")
 
@@ -35,7 +38,7 @@ def pikachu(message):
 
 @bot.message_handler(commands=['heal'])
 def heal(message):
-    global pokemon
+    pokemon = Pokemon.pokemons[message.from_user.username]
     pokemon_hp = pokemon.hp
     if pokemon.hp < pokemon.maxhp:
         if pokemon.bonus > 0:
@@ -49,7 +52,8 @@ def heal(message):
             heel_last_num = pokemon.hp - pokemon_hp
             bot.send_message(message.chat.id, f'Вы подлечили своего покемона на {heel_last_num} хп. Теперь у него {pokemon.hp} хп')
         else:
-            bot.send_message(message.chat.id, f'У вашего покемона нет бонуса для лечения. У него {pokemon.hp} хп. Для получения бонуса выйграйте бой')
-
+            bot.send_message(message.chat.id, f'У вашего покемона нет бонуса для лечения. У него {pokemon.hp}/{pokemon.maxhp}. Для получения бонуса выйграйте бой')
+    else:
+        bot.send_message(message.chat.id, f'У вашего покемона полное здоровье. У него {pokemon.hp} хп')
 bot.infinity_polling(none_stop=True)
 
