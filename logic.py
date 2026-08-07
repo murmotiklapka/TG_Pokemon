@@ -3,10 +3,14 @@ import requests
 
 class Pokemon:
     pokemons = {}
-    # Инициализация объекта (конструктор)
-    def __init__(self, pokemon_trainer, pokemon_number = randint(1,1326)):
+
+    def __init__(self, pokemon_trainer, maxhp = randint(1,100), power = randint(1,100), pokemon_number = randint(1,1025)):
+        self.bonus = 0
+        self.hp = maxhp
+        self.maxhp = maxhp
+        self.power = power   
         self.pokemon_number = pokemon_number
-        self.pokemon_trainer = pokemon_trainer   
+        self.pokemon_trainer = pokemon_trainer
         self.link = f'https://pokeapi.co/api/v2/pokemon/{self.pokemon_number}'
 
         self.img = self.get_img()
@@ -16,7 +20,19 @@ class Pokemon:
 
         Pokemon.pokemons[pokemon_trainer] = self
 
-    # Метод для получения картинки покемона через API
+    def attack(self, enemy):
+        if isinstance(enemy, Wizard):
+            chense = randint(1,100)
+            if chense <= 20:
+                return "Покемон-волшебник применил щит в сражении"
+        if enemy.hp > self.power:
+            enemy.hp -= self.power
+            return f"Сражение @{self.pokemon_trainer} с @{enemy.pokemon_trainer}"
+        else:
+            enemy.hp = 0
+            self.bonus += self.hp * 0.5
+            return f"Победа @{self.pokemon_trainer} над @{enemy.pokemon_trainer}! "
+        
     def get_img(self):
         url = self.link
         response = requests.get(url)
@@ -34,8 +50,7 @@ class Pokemon:
                 return (data['sprites']['versions']['generation-v']['black-white']['animated']['front_default'])
             else:
                 return "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/shiny/2.gif"
-    
-    # Метод для получения имени покемона через API
+
     def get_name(self):
         url = self.link
         response = requests.get(url)
@@ -54,26 +69,44 @@ class Pokemon:
             return ability_names
         else:
             return "Unknown Ability"
-    
-    # Метод класса для получения информации
-    def info(self):
-        return f"Имя твоего покеомона: {self.name}. Абилка твоего покеомона: {self.ability}."
 
-    # Метод класса для получения картинки покемона
+    def info(self):
+        return f"Имя твоего покеомона: {self.name}. Абилка твоего покеомона: {self.ability}.\nХп покемона: {self.hp}. Сила покемона: {self.power}.\nБонус покемона: {self.bonus}. У тебя класс {self.__class__.__name__}"
     def show_img(self):
         return self.img
-
     def show_nummber(self):
-        return self.pokemon_number
-
+        return f'Номмер: {self.pokemon_number}'
     def show_animation(self):
-        return self.pokemon_number
-
+        return self.get_animation
     def show_link(self):
         return self.link
-
     def show_animation(self):
             return self.animation
+
+class Wizard(Pokemon):
+    pass
+
+class Fighter(Pokemon):
+    def attack(self, enemy):
+        super_power = randint(5,15)
+        self.power += super_power
+        result = super().attack(enemy)
+        self.power -= super_power
+        return result + f"\nБоец применил супер-атаку силой:{super_power} "
+
+if __name__ == "__main__":
+    pokemon = Pokemon("Ilya")
+    wizard = Wizard("Ilya K")
+    fighter = Fighter("Ilya Kamyshnikov")
+
+    pokemon.info()
+    wizard.info()
+    fighter.info()
+
+    print(wizard.attack(fighter))
+    print(pokemon.attack(wizard))
+    print(fighter.attack(wizard))
+
 
 pokemon = Pokemon("...")
 
