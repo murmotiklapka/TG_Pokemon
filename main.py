@@ -5,7 +5,6 @@ from config import token
 from logic import Pokemon, Wizard, Fighter
 
 bot = telebot.TeleBot(token) 
-pikachu_nummer = 0
 classes = [Pokemon, Wizard, Fighter]
 
 @bot.message_handler(commands=['go'])
@@ -24,15 +23,13 @@ def go(message):
 
 @bot.message_handler(commands=['pikachu'])
 def pikachu(message):
-    global pikachu_nummer
-    if pikachu_nummer == 0:
+    if message.from_user.username not in Pokemon.pokemons.keys():
         pokemon = Pokemon(message.from_user.username, 25)
         bot.send_message(message.chat.id, pokemon.info())
         bot.send_message(message.chat.id, pokemon.show_link())
         bot.send_photo(message.chat.id, pokemon.show_img())
         bot.send_message(message.chat.id, pokemon.show_nummber())
         bot.send_video(message.chat.id, pokemon.show_animation())
-        pikachu_nummer += 1
     else:
         bot.reply_to(message, "Ты уже создал себе пикачу")
 
@@ -55,5 +52,15 @@ def heal(message):
             bot.send_message(message.chat.id, f'У вашего покемона нет бонуса для лечения. У него {pokemon.hp}/{pokemon.maxhp}. Для получения бонуса выйграйте бой')
     else:
         bot.send_message(message.chat.id, f'У вашего покемона полное здоровье. У него {pokemon.hp} хп')
-bot.infinity_polling(none_stop=True)
 
+@bot.message_handler(commands=['info'])
+def info_main(message):
+    global Pokemon
+    if message.from_user.username in Pokemon.pokemons.keys():
+        pokemon = Pokemon.pokemons[message.from_user.username]
+        bot.reply_to(message, pokemon.info())
+        bot.send_photo(message.chat.id, pokemon.show_img())
+    else:
+        bot.send_message(message.chat.id, 'У вас пока нет покемона создпете его через команду /go')
+
+bot.infinity_polling(none_stop=True)
