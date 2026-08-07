@@ -84,9 +84,14 @@ class Pokemon:
             return self.animation
 
 class Wizard(Pokemon):
-    pass
+    def __init__(self, username):
+        super().__init__(username)
+        self.maxhp = randint(1, 200)
+        self.hp = self.maxhp
 
 class Fighter(Pokemon):
+    def __init__(self, username):
+        super().__init__(username)
     def attack(self, enemy):
         super_power = randint(5,15)
         self.power += super_power
