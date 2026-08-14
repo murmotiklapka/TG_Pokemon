@@ -7,6 +7,14 @@ from logic import Pokemon, Wizard, Fighter
 bot = telebot.TeleBot(token) 
 classes = [Pokemon, Wizard, Fighter]
 
+@bot.message_handler(commands=['start'])
+def start(message):
+    bot.reply_to(message, "Добро пожаловать! Создайте покемона командой /go или просматрите все команды командой /help")
+
+@bot.message_handler(commands=['help'])
+def help(message):
+    bot.reply_to(message, "Команды: /go - Создать покемона, /info - Просмотреть информацию о покемоне\n/heal - Подлечить покемона, /feed - Покормить покемона\n/start - Показать начяльные команды")
+
 @bot.message_handler(commands=['go'])
 def go(message):
     if message.from_user.username not in Pokemon.pokemons.keys():
