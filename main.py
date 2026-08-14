@@ -63,4 +63,12 @@ def info_main(message):
     else:
         bot.send_message(message.chat.id, 'У вас пока нет покемона создпете его через команду /go')
 
+@bot.message_handler(commands=['feed'])
+def feed(message):
+    if message.from_user.username in Pokemon.pokemons.keys():
+        pokemon = Pokemon.pokemons[message.from_user.username]
+        bot.reply_to(message, pokemon.feed())
+    else:
+        bot.send_message(message.chat.id, 'У вас пока нет покемона создпете его через команду /go')
+
 bot.infinity_polling(none_stop=True)
