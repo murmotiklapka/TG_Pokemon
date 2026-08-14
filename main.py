@@ -32,7 +32,7 @@ def go(message):
 @bot.message_handler(commands=['pikachu'])
 def pikachu(message):
     if message.from_user.username not in Pokemon.pokemons.keys():
-        pokemon = Pokemon(message.from_user.username, 25)
+        pokemon = Pokemon(message.from_user.username, pokemon_number = 25)
         bot.send_message(message.chat.id, pokemon.info())
         bot.send_message(message.chat.id, pokemon.show_link())
         bot.send_photo(message.chat.id, pokemon.show_img())
