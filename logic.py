@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from random import randint
 import requests
 
@@ -9,6 +10,7 @@ class Pokemon:
         self.hp = maxhp
         self.maxhp = maxhp
         self.power = power   
+        self.last_feed_time = datetime.now()
         self.pokemon_number = pokemon_number
         self.pokemon_trainer = pokemon_trainer
         self.link = f'https://pokeapi.co/api/v2/pokemon/{self.pokemon_number}'
@@ -69,6 +71,19 @@ class Pokemon:
             return ability_names
         else:
             return "Unknown Ability"
+
+    
+    def feed(self, feed_interval = 30, hp_increase = 10 ):
+        current_time = datetime.now()  
+        delta_time = timedelta(seconds = feed_interval)
+        if (current_time - self.last_feed_time) > delta_time:
+            self.hp += hp_increase
+            self.last_feed_time = current_time
+            print(self.last_feed_time)
+            return f"Здоровье покемона увеличено. Текущее здоровье: {self.hp}"
+        else:
+            return f"Следующее время кормления покемона: {current_time + delta_time}"
+
 
     def info(self):
         return f"Имя твоего покеомона: {self.name}. Абилка твоего покеомона: {self.ability}.\nХп покемона: {self.hp}. Сила покемона: {self.power}.\nБонус покемона: {self.bonus}. У тебя класс {self.__class__.__name__}"
