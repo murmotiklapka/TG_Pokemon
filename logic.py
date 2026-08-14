@@ -73,7 +73,7 @@ class Pokemon:
             return "Unknown Ability"
 
     
-    def feed(self, feed_interval = 30, hp_increase = 10 ):
+    def feed(self, feed_interval = 30, hp_increase = 20 ):
         current_time = datetime.now()  
         delta_time = timedelta(seconds = feed_interval)
         if (current_time - self.last_feed_time) > delta_time:
@@ -86,7 +86,7 @@ class Pokemon:
 
 
     def info(self):
-        return f"Имя твоего покеомона: {self.name}. Абилка твоего покеомона: {self.ability}.\nХп покемона: {self.hp}. Сила покемона: {self.power}.\nБонус покемона: {self.bonus}. У тебя класс {self.__class__.__name__}"
+        return f"Имя твоего покеомона: {self.name}. Абилка твоего покеомона: {self.ability}.\nХп покемона: {self.hp}. Сила покемона: {self.power}.\nБонус покемона: {self.bonus}. У тебя класс {self.__class__.__name__}\nПоследнее кормление покемона: {self.last_feed_time}."
     def show_img(self):
         return self.img
     def show_nummber(self):
@@ -103,16 +103,21 @@ class Wizard(Pokemon):
         super().__init__(username)
         self.maxhp = randint(1, 200)
         self.hp = self.maxhp
+    def feed(self):
+        return super().feed(feed_interval = 35, hp_increase = 25)
 
 class Fighter(Pokemon):
     def __init__(self, username):
         super().__init__(username)
+    def feed(self):
+            return super().feed(feed_interval = 25, hp_increase = 15)
     def attack(self, enemy):
         super_power = randint(5,15)
         self.power += super_power
         result = super().attack(enemy)
         self.power -= super_power
         return result + f"\nБоец применил супер-атаку силой:{super_power} "
+    
 
 if __name__ == "__main__":
     pokemon = Pokemon("Ilya")
